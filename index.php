@@ -65,7 +65,7 @@ function sensor_data($sensor_id) {
         WHERE
           sensor_id = ".(int)$sensor_id."
         ORDER BY
-          timestamp
+          timestamp DESC
   ";
   $res = mysql_query($q);
   $ret['history'] = array();
@@ -78,13 +78,13 @@ function sensor_data($sensor_id) {
       $ret['times'][$i]['start'] = $row['timestamp'];
       $ret['times'][$i]['formatted_start'] = date('Y-m-d H:i:s', $row['timestamp']);
     }
-    if (0 == $row['direction']) {
+    if (0 == $row['direction'] && isset($ret['times'][$i]['start'])) {
       $ret['times'][$i]['end'] = $row['timestamp'];
       $ret['times'][$i]['duration'] = $ret['times'][$i]['start'] - $row['timestamp'];
       $i++;
     }
   }
-     
+//     print_r($ret['times']);
   return $ret;
 }
 
@@ -105,22 +105,79 @@ function footer() {
   return $out;
 }
 
+function format_time($sec) {
+  $out = '';
+  if ($sec < 60) {
+    $out = $sec. ' másodpercre ';
+  } elseif ($sec < 3600) {
+    $out = ((int)($sec/60)).' percre ';
+  } else {
+    $out = ($sec/3600).' órára';
+  }
+  return $out;
+}
+
+function pager($sensor_id, $max_pages, $current_page) {
+  $out = '';
+  
+  $rows_per_page = 10;
+  if ($max_pages > $rows_per_page) { 
+    $out .= '<div id="pager">';
+    if (0 != $current_page) {
+      $out .= '<a href="javascript:void(0);" onclick="showSensor('.(int)$sensor_id.', '.($current_page-1).');">&lt;&lt;</a>';
+    } else {
+      $out .= '&nbsp;&nbsp;&nbsp;';
+    }
+    if (($max_pages / $rows_per_page) > $current_page+1) {
+      $out .= '<a href="javascript:void(0);" onclick="showSensor('.(int)$sensor_id.', '.($current_page+1).');">&gt;&gt;</a>';
+    } else {
+      $out .= '&nbsp;&nbsp;&nbsp;';
+    }
+    $out .= '</div>';
+  }
+  return $out;
+}
+
+
+
 
 function main() {
   $out = '';
-  if (isset($_GET['sensor_id'])) {
-    $data = sensor_data($_GET['sensor_id']);
+  if (isset($_POST['sensor_id'])) {
+    $sensor_id = $_POST['sensor_id'];
+    $data = sensor_data($sensor_id);
+    if (!isset($_POST['page'])) {
+      $page = 0;
+    } else {
+      $page = $_POST['page'];
+    }
+    $out .= pager($sensor_id, count($data['times']), $page);
+    $rows_per_page = 10;
+    for($i = $page * $rows_per_page; $i < ($page+1) * $rows_per_page; $i++) {
+      if (isset($data['times'][$i])) {
+        $out .= '<div class="detail-row">';
+        $out .= '<span>'.$data['times'][$i]['formatted_start'].'</span>-kor felvették <span>'.format_time($data['times'][$i]['duration']).'</span>';
+        $out .= '</div>';
+        $out .= "\n";
+      }
+    }
+    $out .= pager($sensor_id, count($data['times']), $page);
   } else {
     $data = current_status();
     $out .= head();
-//    print_r($data);
+    $out .= "\n";
     $out .= '<div id="sensors">';
+    $out .= "\n";
     foreach($data as $sensor_id => $sensor) {
-      $out .= '<div class="sensor-button" id="sensor-'.$sensor_id.'" onclick="showSensor('.$sensor_id.')">';
-      $out .= '<img src="green.png" width="50" height="50">';
+      $out .= '<div class="sensor-button" id="sensor-'.$sensor_id.'" onclick="showSensor('.$sensor_id.', 0)">';
+      $out .= "\n";
+      $out .= '<img src="'.(0 == $sensor['direction'] ? 'green':'red').'.png" width="50" height="50">';
+      $out .= "\n";
       $out .= '</div>';
+      $out .= "\n";
     }
     $out .= '</div><br style="clear: both"/><div id="detailed"></div>';
+    $out .= "\n";
     $out .= footer();
   }
   echo $out;

@@ -26,7 +26,7 @@ function current_status() {
     $current_status[$row['sensor_id']] = array(
       'sensor_id' => $row['sensor_id'],
       'direction' => $row['direction'],
-      'since' => (time() - $row['timestamp'])
+      'duration' => (time() - $row['timestamp'])
     );
   }
   return $current_status;

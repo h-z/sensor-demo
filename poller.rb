@@ -8,7 +8,7 @@ require 'mysql2'
 #
 def poller 
   #mysql connection
-  db = Mysql2::Client.new(:host => 'localhost', :username => 'shop', :password => '123p4ss', :database => 'shopguard')
+  db = Mysql2::Client.new(:host => 'localhost', :username => 'shop', :password => '123p4ss', :database => 'shop')
   f = File.open('status.xml')
   # XML object
   doc = Nokogiri::XML(f)

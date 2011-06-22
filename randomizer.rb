@@ -33,8 +33,12 @@ end
 # Main loop for creating random XML files
 #
 def main
- sensors = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+ # initial vector for sensors
+ sensors = []
+ # all put down
+ 16.times { sensors << 0 }
  while true
+   # a random action
    sensors = random_action sensors
    # xml variable to make filewriting quicker
    xml = sensor_xml(sensors)
@@ -43,7 +47,7 @@ def main
      f.write(xml) 
    }
    #sensor data varies by random intervals
-   sleep rand(15)
+   sleep rand(15)+2
  end
 end
 

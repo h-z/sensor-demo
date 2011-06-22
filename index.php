@@ -1,6 +1,6 @@
 <?
 $conn = mysql_connect('localhost', 'shop', '123p4ss');
-mysql_select_db('shopguard');
+mysql_select_db('shop');
 
 function current_status() {
   $q = "SELECT
@@ -183,12 +183,12 @@ function main() {
     foreach($data as $sensor_id => $sensor) {
       $out .= '<div class="sensor-button" id="sensor-'.$sensor_id.'" onclick="showSensor('.$sensor_id.', 0)">';
       $out .= "\n";
-      $out .= '<img src="'.(0 == $sensor['direction'] ? 'green':'red').'.png" width="50" height="50" alt="Sensor '.$sensor_id.'" title="Sensor '.$sensor_id.'">';
+      $out .= '<img src="'.(0 == $sensor['direction'] ? 'red':'green').'.png" width="50" height="50" alt="Sensor '.$sensor_id.'" title="Sensor '.$sensor_id.'">';
       $out .= "\n";
       $out .= '</div>';
       $out .= "\n";
     }
-    $out .= '</div><br style="clear: both"/><div id="detailed"></div>';
+    $out .= '</div><br style="clear: both"/><div id="detailed"><div style="text-align:center">Válasszon a fenti szenzorok közül!</div></div>';
     $out .= "\n";
     $out .= footer();
   }

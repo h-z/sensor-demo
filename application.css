@@ -8,7 +8,8 @@ body, table, tr, td, input, select, textarea {
 }
 
 div#main {
-  
+  margin: 0 auto;  
+  width: 1000px;
 }
 
 div#sensors {
@@ -27,8 +28,9 @@ div.sensor-button img {
 }
 
 div#detailed {
-  width: 990px;
+  width: 980px;
   border: 1px solid black;
+  padding: 5px;
 }
 
 div#detailed h2, div#detailed h3 {

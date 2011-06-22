@@ -1,3 +1,8 @@
+
+
+/**
+ * Creates AJAX request for one particular sensor data
+ */
 function showSensor(id, page) {
  new Ajax.Request('index.php', {
    method: 'POST',
@@ -9,6 +14,9 @@ function showSensor(id, page) {
 }
 
 
+/**
+ * Starts periodical AJAX updater to refresh sensor's images
+ */
 function status() {
   
   new Ajax.Request('status.xml?'+parseInt(1000000*Math.random()), {

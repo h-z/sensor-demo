@@ -2,6 +2,9 @@
 $conn = mysql_connect('localhost', 'shop', '123p4ss');
 mysql_select_db('shop');
 
+/**
+ * Gets the sensors' current statuses
+ */
 function current_status() {
   $q = "SELECT
         u1.sensor_id,
@@ -29,10 +32,13 @@ function current_status() {
   return $current_status;
 }
 
+/**
+ * Shows the changes since the timestamp
+ */
 function changes_since($timestamp) {
 print_r(time());
   if (!$timestamp) {
-    $timetamp = time();
+    $timestamp = time();
   }
   $ret = array();
   $q = "SELECT 
@@ -53,6 +59,10 @@ print_r(time());
   return $ret;
 }
 
+/**
+ * Gets one sensor's data
+ * Also creates some aggregated data
+ */
 function sensor_data($sensor_id) {
   if (!$sensor_id) {
     return;
@@ -87,6 +97,10 @@ function sensor_data($sensor_id) {
   return $ret;
 }
 
+/**
+ * HTML header
+ * only for normal requests (not for AJAX)
+ */
 function head() {
   $out = '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
   <html lang="hu">
@@ -99,11 +113,18 @@ function head() {
   return $out;
 }
 
+/**
+ * HTML footer
+ * only for normal requests (not for AJAX)
+ */
 function footer() {
   $out = '</div></body></html>';
   return $out;
 }
 
+/**
+ * Time formatter
+ */
 function format_time($sec) {
   $out = array();
   
@@ -120,6 +141,9 @@ function format_time($sec) {
   return implode(', ', $out);
 }
 
+/**
+ * Creates pager div if data is lomger than pagesize
+ */
 function pager($sensor_id, $max_pages, $current_page) {
   $out = '';
   
@@ -145,6 +169,11 @@ function pager($sensor_id, $max_pages, $current_page) {
 
 
 
+/**
+ * Main function
+ * handles GET parameters
+ * handles normal and AJAX requests
+ */
 function main() {
   $out = '';
   if (isset($_POST['sensor_id'])) {

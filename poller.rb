@@ -43,9 +43,7 @@ def poller
     # array of strings
     data = [s.name.gsub(/Sensor/, ''), s.text=='OFF'?'0':'1', t]
     # from the given data only the new ones should be inserted
-    if previous_sensors.detect { |ps| 
-      ps['sensor_id'].to_s == s.name.gsub(/Sensor/, '') and ps['direction'].to_s != data[1] 
-    }
+    if 0 == previous_sensors.count or previous_sensors.detect { |ps| ps['sensor_id'].to_s == s.name.gsub(/Sensor/, '') and ps['direction'].to_s != data[1] }
       q = "INSERT INTO upraised (sensor_id, direction, timestamp) VALUES (" + data[0] + ", " + data[1] + ", " + data[2] + ")"
       db.query(q)
    end

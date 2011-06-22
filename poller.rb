@@ -4,15 +4,20 @@ require 'rubygems'
 require 'nokogiri'
 require 'mysql2'
 
+# Reads the XML file, inserts changes into database
+#
 def poller 
+  #ymysql connection
   db = Mysql2::Client.new(:host => 'localhost', :username => 'shop', :password => '123p4ss', :database => 'shopguard')
   f = File.open('status.xml')
+  # XML object
   doc = Nokogiri::XML(f)
   f.close
+  # parsing XML file
   sensors = doc.xpath('//UPRAISED/*')
+  #one timestamp for every change in this iteration
   t = Time.new.to_i.to_s
   
-  q = "SELECT * FROM upraised WHERE timestamp = (SELECT MAX(timestamp) AS timestamp FROM upraised)"
   q = "SELECT 
          u1.sensor_id, 
          u1.direction, 
@@ -29,12 +34,15 @@ def poller
              sensor_id) u2 ON u1.sensor_id = u2.sensor_id AND u1.timestamp = u2.ts"
              
   res = db.query(q)
+  # previous states from the database
   previous_sensors = []
   res.each { |r|
     previous_sensors << r
   }
   sensors.each do |s|
+    # array of strings
     data = [s.name.gsub(/Sensor/, ''), s.text=='OFF'?'0':'1', t]
+    # from the given data only the new ones should be inserted
     if previous_sensors.detect { |ps| 
       ps['sensor_id'].to_s == s.name.gsub(/Sensor/, '') and ps['direction'].to_s != data[1] 
     }
@@ -45,11 +53,13 @@ def poller
   sensors
 end
 
-
+# Main loop for polling the XML file into the database
+#
 def main
   sensor_data = nil
   while true
    sensor_data = poller
+   #sleep 2 seconds
    sleep 2
   end
 end

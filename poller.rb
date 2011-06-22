@@ -7,7 +7,7 @@ require 'mysql2'
 # Reads the XML file, inserts changes into database
 #
 def poller 
-  #ymysql connection
+  #mysql connection
   db = Mysql2::Client.new(:host => 'localhost', :username => 'shop', :password => '123p4ss', :database => 'shopguard')
   f = File.open('status.xml')
   # XML object

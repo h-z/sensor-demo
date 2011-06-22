@@ -1,0 +1,16 @@
+div.sensor-button {
+ float: left;
+/* width: 66px;*/
+ cursor: pointer;
+border: 1px solid black;
+
+}
+
+div.sensor-button img {
+  padding: 5px;
+}
+
+div#detailed {
+  width: 960 px;
+  border: 1px solid black;
+}

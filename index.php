@@ -84,7 +84,6 @@ function sensor_data($sensor_id) {
       $i++;
     }
   }
-//     print_r($ret['times']);
   return $ret;
 }
 
@@ -106,15 +105,19 @@ function footer() {
 }
 
 function format_time($sec) {
-  $out = '';
-  if ($sec < 60) {
-    $out = $sec. ' másodpercre ';
-  } elseif ($sec < 3600) {
-    $out = ((int)($sec/60)).' percre ';
-  } else {
-    $out = ($sec/3600).' órára';
+  $out = array();
+  
+  if ($sec > 3600) {
+    $out[] = ((int)($sec/3600)).' órára';
+    $sec -= 3600*((int)($sec/3600));
   }
-  return $out;
+  if ($sec > 60) {
+    $out[] = ((int)($sec/60)).' percre';
+    $sec -= 60*((int)($sec/60));
+  }
+  $out[] = $sec. ' másodpercre ';
+  
+  return implode(', ', $out);
 }
 
 function pager($sensor_id, $max_pages, $current_page) {
@@ -122,12 +125,13 @@ function pager($sensor_id, $max_pages, $current_page) {
   
   $rows_per_page = 10;
   if ($max_pages > $rows_per_page) { 
-    $out .= '<div id="pager">';
+    $out .= '<div class="pager">';
     if (0 != $current_page) {
       $out .= '<a href="javascript:void(0);" onclick="showSensor('.(int)$sensor_id.', '.($current_page-1).');">&lt;&lt;</a>';
     } else {
       $out .= '&nbsp;&nbsp;&nbsp;';
     }
+    $out .= '('.($current_page+1).')';
     if (($max_pages / $rows_per_page) > $current_page+1) {
       $out .= '<a href="javascript:void(0);" onclick="showSensor('.(int)$sensor_id.', '.($current_page+1).');">&gt;&gt;</a>';
     } else {
@@ -151,12 +155,20 @@ function main() {
     } else {
       $page = $_POST['page'];
     }
+    $out .= '<h2>Sensor '.$sensor_id.'</h2>';
+    $sum_time = 0;
+    foreach($data['times'] as $t) {
+      $sum_time += $t['duration'];
+    }
+    $out .= '<h3>';
+    $out .= 'Összesen '.count($data['times']). ' alkalommal, '.format_time($sum_time).' vették fel a szenzort.';
+    $out .= '</h3>';
     $out .= pager($sensor_id, count($data['times']), $page);
     $rows_per_page = 10;
     for($i = $page * $rows_per_page; $i < ($page+1) * $rows_per_page; $i++) {
       if (isset($data['times'][$i])) {
         $out .= '<div class="detail-row">';
-        $out .= '<span>'.$data['times'][$i]['formatted_start'].'</span>-kor felvették <span>'.format_time($data['times'][$i]['duration']).'</span>';
+        $out .= '<span>'.$data['times'][$i]['formatted_start'].'</span>-kor felvették <span title="'.$data['times'][$i]['duration'].' másodperc">'.format_time($data['times'][$i]['duration']).'</span>';
         $out .= '</div>';
         $out .= "\n";
       }
@@ -171,7 +183,7 @@ function main() {
     foreach($data as $sensor_id => $sensor) {
       $out .= '<div class="sensor-button" id="sensor-'.$sensor_id.'" onclick="showSensor('.$sensor_id.', 0)">';
       $out .= "\n";
-      $out .= '<img src="'.(0 == $sensor['direction'] ? 'green':'red').'.png" width="50" height="50">';
+      $out .= '<img src="'.(0 == $sensor['direction'] ? 'green':'red').'.png" width="50" height="50" alt="Sensor '.$sensor_id.'" title="Sensor '.$sensor_id.'">';
       $out .= "\n";
       $out .= '</div>';
       $out .= "\n";
@@ -180,8 +192,9 @@ function main() {
     $out .= "\n";
     $out .= footer();
   }
-  echo $out;
+  return $out;
 }
 
-main();
+print main();
+
 ?>

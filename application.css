@@ -1,8 +1,24 @@
+
+body {
+}
+
+body, table, tr, td, input, select, textarea {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 13px;
+}
+
+div#main {
+  
+}
+
+div#sensors {
+  
+}
+
 div.sensor-button {
- float: left;
-/* width: 66px;*/
- cursor: pointer;
-border: 1px solid black;
+  float: left;
+  cursor: pointer;
+  border: 1px solid black;
 
 }
 
@@ -11,6 +27,13 @@ div.sensor-button img {
 }
 
 div#detailed {
-  width: 960 px;
+  width: 990px;
   border: 1px solid black;
+}
+
+div#detailed h2, div#detailed h3 {
+  text-align: center;
+}
+div.pager {
+  text-align: center;
 }

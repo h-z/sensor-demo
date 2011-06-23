@@ -109,6 +109,7 @@ function head() {
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/prototype/1.7.0.0/prototype.js"></script>
     <script type="text/javascript" src="application.js"></script>
     <link type="text/css" rel="stylesheet" href="application.css"> 
+    <title>Demo</title>
     </head><body><div id="main">';
   return $out;
 }
@@ -186,8 +187,10 @@ function main() {
     }
     $out .= '<h2>Sensor '.$sensor_id.'</h2>';
     $sum_time = 0;
-    foreach($data['times'] as $t) {
-      $sum_time += $t['duration'];
+    if (!empty($data['times'])) {
+      foreach($data['times'] as $t) {
+        $sum_time += $t['duration'];
+      }
     }
     $out .= '<h3>';
     $out .= 'Összesen '.count($data['times']). ' alkalommal, '.format_time($sum_time).' vették fel a szenzort.';

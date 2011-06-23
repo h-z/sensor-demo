@@ -15,6 +15,12 @@ def sensor_xml sensors
           xml.send('Sensor'+(i+1).to_s, (s==0)?'OFF':'ON')
         end
       }
+      xml.SET {
+        sensors.each_with_index { |s, i| xml.send('Sensor'+(i+1).to_s, 'ON') }
+      }
+      xml.ALARM {
+        sensors.each_with_index { |s, i| xml.send('Sensor'+(i+1).to_s, 'OFF') }
+      }
     }
   end
   # returns XML object's string

@@ -1,5 +1,5 @@
 <?
-$conn = mysql_connect('localhost', 'shop', '123p4ss');
+$conn = mysql_connect('localhost', 'sensor', '123p4ss');
 mysql_select_db('shop');
 
 /**
